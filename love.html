@@ -84,10 +84,23 @@ body{
   opacity:1;
 }
 
-/* มือถือให้เห็นปุ่มตลอด */
-@media (hover:none){
-  .overlay{opacity:1}
+.overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(rgba(0,0,0,.15),rgba(0,0,0,.45));
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  pointer-events:none;
+  transition:.35s;
 }
+
+.img-box.show .overlay{
+  opacity:1;
+  pointer-events:auto;
+}
+
 
 /* ===== ปุ่มเปิด (ลดเงา) ===== */
 .open-btn{
@@ -209,5 +222,30 @@ setInterval(()=>{
 },700);
 </script>
 
+  <script>
+document.querySelectorAll(".img-box").forEach(box=>{
+  box.addEventListener("click",e=>{
+    // ถ้ากดปุ่ม ให้ไปหน้าต่อ ไม่ต้อง toggle
+    if(e.target.classList.contains("open-btn")) return;
+
+    // ปิดกล่องอื่น
+    document.querySelectorAll(".img-box").forEach(b=>{
+      if(b!==box) b.classList.remove("show");
+    });
+
+    // toggle กล่องที่แตะ
+    box.classList.toggle("show");
+  });
+});
+
+// แตะพื้นที่ว่างเพื่อปิด
+document.addEventListener("click",e=>{
+  if(!e.target.closest(".img-box")){
+    document.querySelectorAll(".img-box").forEach(b=>b.classList.remove("show"));
+  }
+});
+</script>
+
 </body>
 </html>
+
