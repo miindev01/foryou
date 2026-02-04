@@ -6,174 +6,132 @@
 <title>กล่องความทรงจำ</title>
 
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  padding:40px 20px;
+  background:linear-gradient(135deg,#ffd6e8,#ffeef6);
+  font-family:'Sarabun',sans-serif;
+  overflow-x:hidden;
 }
 
-body {
-  margin: 0;
-  padding: 40px 20px;
-  background: linear-gradient(135deg, #ffd6e8, #ffeef6);
-  font-family: 'Sarabun', sans-serif;
-  overflow-x: hidden;
+/* ===== หัวใจลอย ===== */
+.heart{
+  position:fixed;
+  bottom:-20px;
+  color:rgba(255,105,180,.3);
+  font-size:20px;
+  animation:floatUp 8s linear infinite;
+  pointer-events:none;
+}
+@keyframes floatUp{
+  0%{transform:translateY(0);opacity:0}
+  10%{opacity:1}
+  100%{transform:translateY(-120vh);opacity:0}
 }
 
-/* ===== หัวใจลอยพื้นหลัง ===== */
-.heart {
-  position: fixed;
-  bottom: -20px;
-  color: rgba(255,105,180,0.35);
-  font-size: 20px;
-  animation: floatUp 8s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes floatUp {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 0;
-  }
-  10% { opacity: 1; }
-  100% {
-    transform: translateY(-120vh) scale(1.8);
-    opacity: 0;
-  }
-}
-
-/* ===== GRID ===== */
-.card-container {
-  max-width: 900px;
-  margin: 80px auto;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
+/* ===== GRID (เหมือนคอมทุกขนาด) ===== */
+.card-container{
+  max-width:900px;
+  margin:80px auto;
+  display:grid;
+  grid-template-columns:repeat(2,1fr); /* บังคับ 2 คอลัมน์ */
+  gap:28px;
 }
 
 /* ===== CARD ===== */
-.card {
-  background: #fff;
-  border-radius: 22px;
-  overflow: hidden;
-  box-shadow: 0 14px 30px rgba(0,0,0,0.15);
-  transition: .35s ease;
+.card{
+  background:#fff;
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:0 12px 26px rgba(0,0,0,.12);
+  transition:.35s ease;
 }
-
-.card:hover {
-  transform: translateY(-10px) scale(1.02);
+.card:hover{
+  transform:translateY(-8px);
 }
 
 /* ===== IMAGE ===== */
-.img-box {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
+.img-box{
+  position:relative;
+  width:100%;
+  aspect-ratio:1/1;
+  overflow:hidden;
 }
-
-.img-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform .6s ease;
+.img-box img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:.6s;
 }
-
-.card:hover img {
-  transform: scale(1.12);
+.card:hover img{
+  transform:scale(1.1);
 }
 
 /* ===== Overlay ===== */
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    rgba(0,0,0,.2),
-    rgba(0,0,0,.55)
-  );
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  transition: .4s;
+.overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(rgba(0,0,0,.15),rgba(0,0,0,.45));
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  opacity:0;
+  transition:.35s;
+}
+.img-box:hover .overlay{
+  opacity:1;
 }
 
-.img-box:hover .overlay {
-  opacity: 1;
+/* มือถือให้เห็นปุ่มตลอด */
+@media (hover:none){
+  .overlay{opacity:1}
 }
 
-/* ===== ปุ่มเปิด ===== */
-.open-btn {
-  padding: 14px 30px;
-  border: none;
-  border-radius: 40px;
-  background: linear-gradient(135deg,#ff6fae,#ff3d8b);
-  color: #fff;
-  font-size: 15px;
-  cursor: pointer;
-  box-shadow: 0 10px 25px rgba(255,105,180,.6);
-  animation: pulse 1.8s infinite;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.08); }
-  100% { transform: scale(1); }
+/* ===== ปุ่มเปิด (ลดเงา) ===== */
+.open-btn{
+  padding:12px 28px;
+  border:none;
+  border-radius:40px;
+  background:linear-gradient(135deg,#ff7fb7,#ff4d94);
+  color:#fff;
+  font-size:14px;
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(255,105,180,.35); /* เงาเบา */
 }
 
 /* ===== TEXT ===== */
-.card-text {
-  padding: 18px;
-  text-align: center;
+.card-text{
+  padding:16px;
+  text-align:center;
 }
-
-.card-text h2 {
-  margin: 0;
-  font-size: 20px;
-  color: #ff4d94;
-  animation: textGlow 2s infinite alternate;
+.card-text h2{
+  margin:0;
+  font-size:18px;
+  color:#ff4d94;
 }
-
-@keyframes textGlow {
-  from {
-    text-shadow: 0 0 4px rgba(255,105,180,.4);
-  }
-  to {
-    text-shadow: 0 0 12px rgba(255,105,180,.9);
-  }
-}
-
-.card-text span {
-  font-size: 14px;
-  color: #777;
-}
-
-/* ===== Responsive ===== */
-@media (max-width: 576px) {
-  .card-container {
-    grid-template-columns: 1fr;
-  }
-  .overlay {
-    opacity: 1;
-  }
+.card-text span{
+  font-size:13px;
+  color:#777;
 }
 
 /* ===== ปุ่มย้อนกลับ ===== */
-.back-btn {
-  position: fixed;
-  top: 18px;
-  left: 18px;
-  padding: 10px 20px;
-  border-radius: 40px;
-  border: none;
-  background: linear-gradient(135deg,#fff,#ffe0ee);
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(255,105,180,.4);
-  transition: .3s;
-  z-index: 50;
+.back-btn{
+  position:fixed;
+  top:18px;
+  left:18px;
+  padding:9px 18px;
+  border-radius:40px;
+  border:none;
+  background:#fff;
+  font-size:14px;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(255,105,180,.25); /* เงาเบาลง */
+  z-index:50;
 }
-
-.back-btn:hover {
-  transform: translateY(-3px);
+.back-btn:hover{
+  transform:translateY(-2px);
 }
 </style>
 </head>
@@ -238,20 +196,17 @@ body {
 
 </div>
 
-<!-- หัวใจลอย -->
 <script>
-function createHeart(){
-  const heart = document.createElement("div");
-  heart.className = "heart";
-  heart.innerHTML = "❤";
-  heart.style.left = Math.random()*100 + "vw";
-  heart.style.fontSize = Math.random()*20 + 14 + "px";
-  heart.style.animationDuration = Math.random()*4 + 6 + "s";
-  document.body.appendChild(heart);
-
-  setTimeout(()=>heart.remove(),8000);
-}
-setInterval(createHeart, 600);
+setInterval(()=>{
+  const h=document.createElement("div");
+  h.className="heart";
+  h.innerHTML="❤";
+  h.style.left=Math.random()*100+"vw";
+  h.style.fontSize=Math.random()*18+14+"px";
+  h.style.animationDuration=Math.random()*3+6+"s";
+  document.body.appendChild(h);
+  setTimeout(()=>h.remove(),8000);
+},700);
 </script>
 
 </body>
