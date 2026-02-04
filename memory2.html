@@ -6,14 +6,18 @@
 <title>Love Puzzle</title>
 
 <style>
+*{box-sizing:border-box}
 body{
   margin:0;
   font-family:'Sarabun',sans-serif;
   background:linear-gradient(135deg,#ffb6d5,#ffd6e8);
   min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-/* ===== ปุ่มย้อนกลับ ===== */
+/* ปุ่มย้อนกลับ */
 .back-btn{
   position:fixed;
   top:15px;
@@ -25,41 +29,41 @@ body{
   color:#000;
   font-size:14px;
   cursor:pointer;
-  box-shadow:0 6px 18px rgba(0,0,0,.15);
-  transition:.25s;
+  box-shadow:0 4px 10px rgba(0,0,0,.15);
   z-index:20;
 }
-.back-btn:hover{
-  transform:translateY(-2px);
+
+/* กล่องหลัก */
+.wrapper{
+  width:100%;
+  display:flex;
+  justify-content:center;
 }
 
-/* ===== หัวข้อ ===== */
-h2{
-  text-align:center;
-  margin:80px 0 18px;
-  color:#fff;
-  font-weight:600;
-  text-shadow:0 2px 6px rgba(0,0,0,.25);
-}
-
-/* ===== กล่องเกม ===== */
 .game{
   background:#fff;
   width:92%;
   max-width:420px;
-  margin:0 auto 40px;
-  padding:18px;
-  border-radius:26px;
+  padding:20px;
+  border-radius:28px;
   box-shadow:0 15px 35px rgba(0,0,0,.25);
 }
 
-/* ===== กระดาน ===== */
+/* หัวข้อ */
+h2{
+  text-align:center;
+  margin:10px 0 20px;
+  color:#ff4d88;
+}
+
+/* กระดาน */
 .board{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:10px;
 }
 
+/* ช่อง */
 .slot{
   aspect-ratio:1/1;
   border-radius:16px;
@@ -68,16 +72,17 @@ h2{
   overflow:hidden;
 }
 
-/* ===== ชิ้น ===== */
+/* ชิ้น */
 .piece{
   width:100%;
   height:100%;
   background-image:url("images/love.png");
   background-size:300% 300%;
+  touch-action:none;
   cursor:grab;
 }
 
-/* ===== Overlay ===== */
+/* Overlay */
 .overlay{
   position:fixed;
   inset:0;
@@ -89,14 +94,12 @@ h2{
   z-index:30;
 }
 
-/* ===== Popup ===== */
 .popup{
-  background:rgba(255,255,255,.95);
-  padding:32px 28px;
+  background:#fff;
+  padding:32px 26px;
   border-radius:30px;
   text-align:center;
-  box-shadow:0 20px 40px rgba(0,0,0,.25);
-  animation:pop .45s ease;
+  animation:pop .4s ease;
 }
 
 @keyframes pop{
@@ -106,31 +109,19 @@ h2{
 
 .popup h3{
   color:#ff4d88;
-  margin-bottom:10px;
 }
 
-.popup p{
-  margin:0 0 18px;
-  color:#444;
-}
-
-/* ===== ปุ่มปิด ===== */
 .close-btn{
+  margin-top:16px;
   padding:10px 28px;
   border:none;
   border-radius:30px;
   background:linear-gradient(135deg,#ff6fae,#ff9ecb);
   color:#fff;
   font-size:15px;
-  cursor:pointer;
-  box-shadow:0 6px 18px rgba(255,105,180,.45);
-  transition:.25s;
-}
-.close-btn:hover{
-  transform:scale(1.05);
 }
 
-/* ===== หัวใจลอย ===== */
+/* หัวใจ */
 .heart{
   position:fixed;
   bottom:-20px;
@@ -138,10 +129,7 @@ h2{
   pointer-events:none;
 }
 @keyframes float{
-  to{
-    transform:translateY(-110vh);
-    opacity:0;
-  }
+  to{transform:translateY(-110vh);opacity:0}
 }
 </style>
 </head>
@@ -149,37 +137,37 @@ h2{
 <body>
 
 <button class="back-btn" onclick="history.back()">ย้อนกลับ</button>
-<h2>ที่รักจะทำได้ไหมนะ </h2>
 
-<div class="game">
-  <div class="board" id="board"></div>
+<div class="wrapper">
+  <div class="game">
+    <h2>ที่รักลองต่อดูนะ 💕</h2>
+    <div class="board" id="board"></div>
+  </div>
 </div>
 
 <!-- popup -->
 <div class="overlay" id="overlay">
   <div class="popup">
-    <h3>💖 ที่รักของเค้าเก่งที่สุด 💖</h3>
+    <h3>💖 เค้าภูมิใจในตัวที่รักมาก 💖</h3>
     <p>ต่อรูปของเราได้สำเร็จแล้ว</p>
     <button class="close-btn" onclick="closePopup()">ปิด</button>
   </div>
 </div>
 
 <script>
-const board = document.getElementById("board");
+const board=document.getElementById("board");
+let positions=[...Array(9).keys()];
+let shuffled=[...positions].sort(()=>Math.random()-0.5);
 
-/* สร้างตำแหน่ง */
-let positions = [...Array(9).keys()];
-let shuffled = [...positions].sort(()=>Math.random()-0.5);
+let activePiece=null;
 
 /* สร้างกระดาน */
 shuffled.forEach((pos,index)=>{
-  const slot = document.createElement("div");
+  const slot=document.createElement("div");
   slot.className="slot";
-  slot.dataset.slot=index;
 
-  const piece = document.createElement("div");
+  const piece=document.createElement("div");
   piece.className="piece";
-  piece.draggable=true;
   piece.dataset.piece=pos;
 
   const x=(pos%3)*50;
@@ -189,26 +177,25 @@ shuffled.forEach((pos,index)=>{
   slot.appendChild(piece);
   board.appendChild(slot);
 
-  piece.addEventListener("dragstart",e=>{
-    e.dataTransfer.setData("text",piece.dataset.piece);
+  /* touch / pointer */
+  piece.addEventListener("pointerdown",()=>{
+    activePiece=piece;
+    piece.style.opacity=".7";
   });
 });
 
-/* ลากสลับ */
-board.querySelectorAll(".slot").forEach(slot=>{
-  slot.addEventListener("dragover",e=>e.preventDefault());
-  slot.addEventListener("drop",e=>{
-    e.preventDefault();
-    const num=e.dataTransfer.getData("text");
-    const from=document.querySelector(`[data-piece="${num}"]`);
-    const to=slot.querySelector(".piece");
-
-    if(from && to && from!==to){
-      const fromSlot=from.parentElement;
-      fromSlot.appendChild(to);
-      slot.appendChild(from);
+document.querySelectorAll(".slot").forEach(slot=>{
+  slot.addEventListener("pointerup",()=>{
+    if(!activePiece) return;
+    const target=slot.querySelector(".piece");
+    if(target && target!==activePiece){
+      const from=activePiece.parentElement;
+      from.appendChild(target);
+      slot.appendChild(activePiece);
       checkWin();
     }
+    activePiece.style.opacity="1";
+    activePiece=null;
   });
 });
 
@@ -216,14 +203,12 @@ board.querySelectorAll(".slot").forEach(slot=>{
 function checkWin(){
   const slots=document.querySelectorAll(".slot");
   let ok=true;
-
   slots.forEach((s,i)=>{
-    if(parseInt(s.querySelector(".piece").dataset.piece)!==i) ok=false;
+    if(parseInt(s.firstChild.dataset.piece)!==i) ok=false;
   });
-
   if(ok){
     document.getElementById("overlay").style.display="flex";
-    for(let i=0;i<18;i++) heart();
+    for(let i=0;i<20;i++) heart();
   }
 }
 
@@ -233,7 +218,7 @@ function heart(){
   h.className="heart";
   h.innerHTML="💖";
   h.style.left=Math.random()*100+"vw";
-  h.style.fontSize=16+Math.random()*22+"px";
+  h.style.fontSize=18+Math.random()*20+"px";
   document.body.appendChild(h);
   setTimeout(()=>h.remove(),4000);
 }
