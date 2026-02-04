@@ -5,8 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Love Puzzle</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box}
 body{
   margin:0;
   font-family:'Sarabun',sans-serif;
@@ -20,17 +21,16 @@ body{
 /* ปุ่มย้อนกลับ */
 .back-btn{
   position:fixed;
-  top:15px;
-  left:15px;
+  top:14px;
+  left:14px;
   padding:10px 20px;
   border:none;
   border-radius:30px;
   background:#fff;
-  color:#000;
   font-size:14px;
   cursor:pointer;
-  box-shadow:0 4px 10px rgba(0,0,0,.15);
-  z-index:20;
+  box-shadow:0 6px 18px rgba(0,0,0,.2);
+  z-index:10;
 }
 
 /* กล่องหลัก */
@@ -40,19 +40,20 @@ body{
   justify-content:center;
 }
 
+/* กล่องเกม */
 .game{
   background:#fff;
   width:92%;
-  max-width:420px;
-  padding:20px;
-  border-radius:28px;
-  box-shadow:0 15px 35px rgba(0,0,0,.25);
+  max-width:380px;
+  padding:22px;
+  border-radius:30px;
+  box-shadow:0 18px 40px rgba(0,0,0,.25);
+  text-align:center;
 }
 
 /* หัวข้อ */
 h2{
-  text-align:center;
-  margin:10px 0 20px;
+  margin:0 0 16px;
   color:#ff4d88;
 }
 
@@ -67,7 +68,6 @@ h2{
 .slot{
   aspect-ratio:1/1;
   border-radius:16px;
-  border:2px solid #ff8fb8;
   background:#ffe6f1;
   overflow:hidden;
 }
@@ -78,27 +78,35 @@ h2{
   height:100%;
   background-image:url("images/love.png");
   background-size:300% 300%;
-  touch-action:none;
-  cursor:grab;
+  cursor:pointer;
+  transition:.25s;
 }
 
-/* Overlay */
+/* ชิ้นที่เลือก */
+.piece.active{
+  outline:4px solid #ff6fae;
+  transform:scale(0.95);
+}
+
+/* overlay */
 .overlay{
   position:fixed;
   inset:0;
-  background:rgba(255,182,213,.35);
+  background:rgba(255,182,213,.4);
   backdrop-filter:blur(6px);
   display:none;
   justify-content:center;
   align-items:center;
-  z-index:30;
+  z-index:20;
 }
 
+/* popup */
 .popup{
   background:#fff;
-  padding:32px 26px;
+  padding:30px 28px;
   border-radius:30px;
   text-align:center;
+  box-shadow:0 20px 40px rgba(0,0,0,.25);
   animation:pop .4s ease;
 }
 
@@ -109,16 +117,18 @@ h2{
 
 .popup h3{
   color:#ff4d88;
+  margin-bottom:8px;
 }
 
 .close-btn{
-  margin-top:16px;
+  margin-top:14px;
   padding:10px 28px;
   border:none;
   border-radius:30px;
   background:linear-gradient(135deg,#ff6fae,#ff9ecb);
   color:#fff;
   font-size:15px;
+  cursor:pointer;
 }
 
 /* หัวใจ */
@@ -129,7 +139,10 @@ h2{
   pointer-events:none;
 }
 @keyframes float{
-  to{transform:translateY(-110vh);opacity:0}
+  to{
+    transform:translateY(-110vh);
+    opacity:0;
+  }
 }
 </style>
 </head>
@@ -148,21 +161,22 @@ h2{
 <!-- popup -->
 <div class="overlay" id="overlay">
   <div class="popup">
-    <h3>💖 เค้าภูมิใจในตัวที่รักมาก 💖</h3>
+    <h3>💖 เก่งที่สุดเลย 💖</h3>
     <p>ต่อรูปของเราได้สำเร็จแล้ว</p>
     <button class="close-btn" onclick="closePopup()">ปิด</button>
   </div>
 </div>
 
 <script>
-const board=document.getElementById("board");
+const board = document.getElementById("board");
+let firstPiece = null;
+
+/* สุ่มตำแหน่ง */
 let positions=[...Array(9).keys()];
-let shuffled=[...positions].sort(()=>Math.random()-0.5);
+positions.sort(()=>Math.random()-0.5);
 
-let activePiece=null;
-
-/* สร้างกระดาน */
-shuffled.forEach((pos,index)=>{
+/* สร้างชิ้น */
+positions.forEach((pos,i)=>{
   const slot=document.createElement("div");
   slot.className="slot";
 
@@ -174,30 +188,29 @@ shuffled.forEach((pos,index)=>{
   const y=Math.floor(pos/3)*50;
   piece.style.backgroundPosition=`${x}% ${y}%`;
 
+  piece.onclick=()=>selectPiece(piece);
+
   slot.appendChild(piece);
   board.appendChild(slot);
-
-  /* touch / pointer */
-  piece.addEventListener("pointerdown",()=>{
-    activePiece=piece;
-    piece.style.opacity=".7";
-  });
 });
 
-document.querySelectorAll(".slot").forEach(slot=>{
-  slot.addEventListener("pointerup",()=>{
-    if(!activePiece) return;
-    const target=slot.querySelector(".piece");
-    if(target && target!==activePiece){
-      const from=activePiece.parentElement;
-      from.appendChild(target);
-      slot.appendChild(activePiece);
-      checkWin();
-    }
-    activePiece.style.opacity="1";
-    activePiece=null;
-  });
-});
+/* แตะเพื่อสลับ */
+function selectPiece(piece){
+  if(!firstPiece){
+    firstPiece=piece;
+    piece.classList.add("active");
+  }else if(piece!==firstPiece){
+    const slot1=firstPiece.parentElement;
+    const slot2=piece.parentElement;
+
+    slot1.appendChild(piece);
+    slot2.appendChild(firstPiece);
+
+    firstPiece.classList.remove("active");
+    firstPiece=null;
+    checkWin();
+  }
+}
 
 /* ตรวจสอบ */
 function checkWin(){
